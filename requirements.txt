@@ -1,0 +1,12 @@
+mne
+numpy
+scipy
+pandas
+scikit-learn
+pyriemann
+torch
+matplotlib
+seaborn
+jupyter
+h5py
+mat73
