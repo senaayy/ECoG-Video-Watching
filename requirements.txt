@@ -8,3 +8,5 @@ torch
 matplotlib
 seaborn
 jupyter
+h5py
+mat73
