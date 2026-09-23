@@ -9,3 +9,6 @@ data/processed/*
 !data/processed/.gitkeep
 reports/figures/*
 !reports/figures/.gitkeep
+!reports/figures/band_power_summary.png
+!reports/figures/model_accuracy_summary.png
+!reports/figures/results.txt
