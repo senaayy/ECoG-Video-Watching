@@ -59,3 +59,42 @@ kanal arası (bkz. yukarıdaki analiz çıktısı). Düzeltiliyor.
 python analysis/electrode_signal_localization.py data/raw/faceshouses.npz
 ```
 Tam çıktı: `analysis/electrode_signal_localization_output.txt`
+
+---
+
+## Ek doğrulama: Miller ve ark. (2017)'nin gürültü-eşiği bulgusunu tekrar üretme denemesi
+
+Orijinal makale (Miller, K.J. ve ark., "Face percept formation in human
+ventral temporal cortex", J Neurophysiol 2017 —
+https://pmc.ncbi.nlm.nih.gov/articles/PMC5668462 ) bu VERİ SETİNİN
+kaynağı: aynı 7 hasta, fusiform+lingual gyrus elektrotları, aynı iki görev
+(`dat1`=localizer, `dat2`=gürültülü tespit). Ana bulguları: nöral broadband
+yanıt, uyaran gürültüsü arttıkça kademeli azalıyor, ama algısal eşiğin
+(~%50 gürültü) ÜZERİNDE aniden taban seviyesine düşüyor ("hepsi ya da
+hiçbiri" örüntü).
+
+Bunu `dat2` (pipeline'ın geri kalanı sadece `dat1` kullanıyordu) ile,
+basitleştirilmiş bir yöntemle tekrar üretmeyi denedik
+(`noise_threshold_replication.py`): her hastanın Fusiform+Lingual
+kanallarının 100-400ms'lik high-gamma yanıtını, sadece gerçek yüz
+uyaranlarında (`stim_cat==2`), gürültü seviyesine göre gruplayıp
+hastalar arası havuzladık.
+
+**Sonuç (`noise_threshold_replication.png`):** Genel eğilim doğru yönde —
+düşük gürültüde (0-15%) ortalama yanıt ~0.18 (z-skor), orta gürültüde
+(20-45%) ~0.00, yüksek gürültüde (50-100%) ~-0.07'ye düşüyor. Ama
+nokta-nokta bakıldığında düzensiz (bazı gürültü seviyelerinde beklenmedik
+sıçramalar var) ve makalenin öne çıkan KESKİN eşik örüntüsü net şekilde
+görünmüyor — muhtemelen bizim yöntemimizin (kanalların kaba ortalaması,
+basit z-skor normalizasyonu, n=7) orijinal makalenin çok daha titiz
+istatistiksel yönteminden (elektrot-bazlı analiz) çok daha kaba olmasından.
+
+**Dürüst sonuç:** kaba yönü (gürültü arttıkça sinyal zayıflıyor)
+doğruladık; makalenin keskin eşik bulgusunu bu basit yöntemle net şekilde
+yeniden üretemedik. Bu, "replikasyon başarısız" değil — kendi basit
+yöntemimizin sınırlarını gösteren, dürüst bir kısmi doğrulama.
+
+Çalıştırma:
+```bash
+python analysis/noise_threshold_replication.py data/raw/faceshouses.npz
+```

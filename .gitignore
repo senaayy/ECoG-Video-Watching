@@ -11,4 +11,5 @@ reports/figures/*
 !reports/figures/.gitkeep
 !reports/figures/band_power_summary.png
 !reports/figures/model_accuracy_summary.png
+!reports/figures/gyrus_discriminability.png
 !reports/figures/results.txt
