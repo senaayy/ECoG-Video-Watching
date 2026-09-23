@@ -1,0 +1,52 @@
+=== ADIM 1: en iyi tek-ozellik etkisi vs RF dogrulugu ===
+  r(|en_iyi_d|, RF_dogruluk) = 0.897  (n_gecerli_deneme hepsinde ayni: [300, 300, 300, 300, 300, 300, 300])
+  r(n_gecerli_deneme, RF_dogruluk) = nan  (varyans yok -> orneklem buyuklugu ELENDI)
+
+=== ADIM 2 (basarisiz): tek FFA noktasina uzaklik ===
+  r(min_FFA_uzaklik, RF_dogruluk) = 0.677  (beklenen negatif, cikan: ters yonde)
+  -> Sonuc: tek nokta cok kaba bir yaklasim, dogrulanmadi.
+
+=== ADIM 3 (basarisiz): yaklasik anatomik kutu icindeki elektrot sayisi ===
+  r(kutu_ici_elektrot_sayisi, RF_dogruluk) = 0.098
+  -> Sonuc: neredeyse iliskisiz, bu yontem de dogrulamadi.
+
+=== ADIM 4 (calisti): gercek anatomik etiketlerle (lobe/gyrus), kanal-duzeyinde, havuzlanmis ===
+  r(gorsel-kategori-ilgili_bolge_orani, RF_dogruluk) = -0.522  (hasta-bazli, hala kucuk n=7)
+
+  LOBE                n_kanal   ortalama|d|   
+  Occipital Lobe      40        0.280         
+  Temporal Lobe       111       0.211         
+  Anterior Lobe       8         0.187         
+  Frontal Lobe        67        0.181         
+  Limbic Lobe         40        0.177         
+  Parietal Lobe       15        0.177         
+  Sub-lobar           64        0.157         
+
+  GYRUS (n>=3)                n_kanal   ortalama|d|   
+  Lingual Gyrus               17        0.303         
+  Fusiform Gyrus              46        0.268         
+  Rectal Gyrus                3         0.229         
+  Medial Frontal Gyrus        4         0.217         
+  Superior Temporal Gyrus     33        0.209         
+  Inferior Frontal Gyrus      11        0.204         
+  Cuneus                      7         0.199         
+  Precentral Gyrus            3         0.192         
+  *                           8         0.187         
+  Postcentral Gyrus           7         0.186         
+  Inferior Temporal Gyrus     22        0.181         
+  Parahippocampal Gyrus       24        0.181         
+  Middle Frontal Gyrus        20        0.178         
+  Middle Temporal Gyrus       21        0.173         
+  Inferior Parietal Lobule    7         0.168         
+  Superior Frontal Gyrus      24        0.164         
+  Uncus                       11        0.163         
+  Caudate                     63        0.159         
+  Sub-Gyral                   4         0.155         
+
+  -> Sonuc: Lingual Gyrus ve Fusiform Gyrus (ventral gorsel/yuz-isleme
+     hatti), Frontal/Limbic/Parietal/Caudate gibi ilgisiz bolgelerden
+     belirgin sekilde daha yuksek ortalama ayirt edicilik gosteriyor.
+     Yani sinyal GERCEKTEN dogru anatomik bolgede yogunlasiyor - ama
+     hasta-bazli 'ne kadar coverage' sayisi (n=7 ile) bunu net bir
+     dogruluk tahminine cevirmeye yetmiyor; kanal SAYISI degil, kanal
+     KALITESI/gucu belirleyici gorunuyor.
