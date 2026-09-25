@@ -98,3 +98,64 @@ yöntemimizin sınırlarını gösteren, dürüst bir kısmi doğrulama.
 ```bash
 python analysis/noise_threshold_replication.py data/raw/faceshouses.npz
 ```
+
+---
+
+## Ek analiz: LDA'nın düşük performansının kaynağı — kovaryans tahmini mi, algoritma mı?
+
+### Soru
+
+Ana pipeline'da LDA (0.531) en düşük ortalama doğruluğu veren modeldi. Bunun
+sebebi LDA algoritmasının bu problem için doğası gereği yetersiz olması mı,
+yoksa az örneklemle (hasta başına n=300 deneme) yüksek boyutlu (234-360
+özellik, yani kanal×bant) bir kovaryans matrisini güvenilir tahmin
+edememesi mi?
+
+### Yöntem (`test_shrinkage_lda.py`)
+
+Pipeline'ın geri kalanı (epoklama, bant gücü özellik çıkarımı, StandardScaler,
+Stratified 5-Fold) BİREBİR AYNI bırakıldı; sadece LDA'nın kovaryans tahminine
+"shrinkage" (regularizasyon) eklendi — tek satırlık bir ayar
+(`LinearDiscriminantAnalysis(solver="lsqr", shrinkage="auto")`).
+
+### Sonuç — gerçek `faceshouses.npz` verisiyle, 7 hasta
+
+| Hasta | özellik sayısı | LDA (düz) | LDA (shrinkage) | fark |
+|---|---|---|---|---|
+| 1 | 246 | 0.443 | 0.507 | +0.063 |
+| 2 | 300 | 0.497 | 0.597 | +0.100 |
+| 3 | 234 | 0.497 | 0.600 | +0.103 |
+| 4 | 360 | 0.543 | 0.513 | −0.030 |
+| 5 | 348 | 0.637 | 0.770 | +0.133 |
+| 6 | 234 | 0.520 | 0.667 | +0.147 |
+| 7 | 348 | 0.580 | 0.770 | +0.190 |
+
+**Ortalama (hastalar arası): 0.531 ± 0.058 → 0.632 ± 0.101**
+
+7 hastanın 6'sında iyileşme var (tek istisna: 4. hasta, hafif kötüleşme
+−0.030). Düzeltilmiş LDA artık SVM'i (0.608) geçiyor ve Random Forest'a
+(0.693) belirgin şekilde yaklaşıyor.
+
+### Yorum
+
+Bu, LDA'nın "kötü" olmasının algoritmanın kendisinden değil, örneklem
+sayısının (n=300) özellik sayısına (234-360) çok yakın olduğu bu rejimde
+standart kovaryans tahmininin güvenilirliğini yitirmesinden kaynaklandığını
+doğruluyor: kovaryans matrisinin boyutu özellik sayısının karesiyle
+büyüyor, ve n≈p durumunda bu tahmin neredeyse tekilleşip gürültülü hale
+geliyor. Shrinkage bu tahmini yapay olarak sadeleştirerek düzeltiyor.
+Sonuç olarak "az veri → basit model daha güvenli" sezgisi doğru, ama
+"basitlik" ölçütü modelin çizdiği sınırın şekli değil, tahmin etmesi
+gereken parametre sayısı olmalı — LDA'nın çizgisi basit görünse de, arka
+plandaki kovaryans tahmini yüksek boyutta hiç basit değil.
+
+Çalıştırma:
+```bash
+python analysis/test_shrinkage_lda.py data/raw/faceshouses.npz
+```
+(not: gerçek `faceshouses.npz` bu repoda değil, sadece kendi Downloads
+klasöründe — komuta o yolu vermen gerekiyor, örn.
+`python analysis/test_shrinkage_lda.py C:\Users\sena9\Downloads\faceshouses.npz`)
+
+Grafik: `analysis/shrinkage_lda_comparison_1.png` (4 modelin
+karşılaştırması — LDA düz, LDA shrinkage, SVM, RF)
